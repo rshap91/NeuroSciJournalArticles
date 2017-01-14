@@ -1,0 +1,74 @@
+#tooltip {   
+    position: absolute;         
+    text-align: center;
+/*    width: 60px;                  
+    height: 28px;   */              
+    padding: 2px;               
+    font: 12px sans-serif;      
+    background: lightsteelblue; 
+    border: 0px;        
+    border-radius: 8px;         
+    pointer-events: none;
+    opacity: 0;      
+}
+
+#visuals {
+    display:inline-block;
+}
+
+
+div.wordCounts {
+    margin-left: 25px;
+    display:inline-block;
+    float:left;
+    width: 550px;
+}
+
+.barchart {
+    display:inline-block;
+    float:left;
+    width: 600px;
+}
+
+.wordCounts text {
+    pointer-events: none;
+    text-anchor: middle;
+    font-weight: bold;
+    opacity:1;
+    fill-opacity:1;
+}
+
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.axis text {
+            font-family: serif;
+            font-size: 12px;
+            margin-right:50px;
+        }
+
+.axis path {
+    fill: none;
+    }
+
+.axis line {
+        fill:black;
+        stroke:black;
+        stroke-dasharray: 2,3;
+        opacity:0.35;
+    }
+
+
+#articleHeader {
+    clear:left;
+}
+
+#articleText {
+    clear:left;
+    border: 1px solid black;
+}

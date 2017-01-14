@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.nodes circle {
+  fill: #ccc;
+  stroke: #000;
+}
+.links {
+  stroke: #999;
+  stroke-width: 1.5px;
+}
+text {
+  pointer-events: none;
+  text-anchor: middle;
+  font-weight: bold;
+}
+</style>
+<svg width="960" height="600"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var simulation = d3.forceSimulation()
+    .force("charge", d3.forceManyBody().strength(-220)) // internodal strength
+    .force("link", d3.forceLink().id(function(d) { return d['']; }).distance(100).strength(0.2)) // creates a force connecting links. Id points to related id in nodes 
+    .force("x", d3.forceX(width / 2)) // pull towards location on x axis
+    .force("y", d3.forceY(height / 2)); // pull towards location on y axis
+
+window.sim = simulation
+
+var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+
+
+var topics = ['Dependency', 'Coding_Latex', 'Brain_Modelling', 'Stroke_Aneurysm_Damage', 
+        'Memory', 'Attention', 'Psychiatric_Disorder', 'Cancer_Genetics', 
+        'Depression_ADHD', 'Pain_MotorFunction','Neurons', 'Sleep','BrainMapping', 
+        'Alzheimers_Dementia_Parkinson', 'Animal_Experiments']
+
+
+d3.csv("components_df_mini.csv", function(error, data) {
+	
+	console.log(data)
+	window.data = data
+
+	var byTopic = d3.nest().key(function(d){return d.topic}).entries(data)
+
+
+	var nodes = data,
+	links = [];
+	
+	data.forEach(function(w){
+		curr_topic = w.topic
+		filtered = data.filter(function(d){return d.topic == curr_topic})
+		for (j=0; j < filtered.length; j++){
+			if (filtered[j].word == w.word){continue}
+			else {
+				links.push({'source':w[''], 'target':filtered[j]['']})
+			}
+		}
+
+	})
+
+	console.log(links)
+
+
+
+	
+
+	var graph = {
+	"nodes": nodes,
+	"links": links 
+	}
+
+	
+	console.log(graph)
+
+
+	var link = svg.append("g")
+		.attr("class", "links")
+		.selectAll("line")
+		.data(graph.links)
+		.enter().append("line");
+
+	
+	var node = svg.append("g")
+		.attr("class", "nodes")
+		.selectAll("circle")
+		.data(graph.nodes)
+		.enter().append("circle")
+		.attr("class", function(d) { return d.topic; })
+		.attr('r', 20)
+		.style('stroke', '#EEE')
+		.style('fill', '#EEE')
+		.call(d3.drag()
+		.on("start", dragstarted)
+		.on("drag", dragged)
+		.on("end", dragended))
+
+
+
+
+	var text = svg.append("g")
+		.attr("class", "text")
+		.selectAll("text")
+		.data(graph.nodes)
+		.enter().append("text")
+		.text(function(d, i) { return d.word; })
+		.style('font-size', '11pt')
+		.style("fill", function(d) { return color(d.topic); })
+	
+	simulation
+		.nodes(graph.nodes)
+		.on("tick", ticked);
+
+	simulation.force("link")
+      .links(graph.links)
+
+	// 	simulation.force("link")
+	// 	.links(graph.links);
+
+function ticked() {
+	link
+		.attr("x1", function(d) { return d.source.x; })
+		.attr("y1", function(d) { return d.source.y; })
+		.attr("x2", function(d) { return d.target.x; })
+		.attr("y2", function(d) { return d.target.y; });
+	node
+		.attr("cx", function(d) { return d.x; })
+		.attr("cy", function(d) { return d.y; });
+	text
+		.attr("x", function(d) { return d.x; })
+		.attr("y", function(d) { return d.y; });
+	}
+});  // end tsv func
+
+
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+</script>
