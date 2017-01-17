@@ -12,6 +12,7 @@ from sys import stderr, stdout
 import numpy as np
 import pandas as pd
 import cPickle as pickle
+import re
 
 from gensim.summarization import summarize, keywords
 
@@ -61,7 +62,33 @@ topics = ['Coding_Latex', "Genetics", 'Psychiatric_Disorder', 'Attention', 'Immu
         'Brain_Mapping', 'Memory']
 
 
+# LOCATE ARTICLE LINKS
+issn = re.compile(r'\d{4}-\d{3,4}[xX]?')
+doi = re.compile(r'(10[.]+[0-9]{4,}.+?[0-9a-z])(?:[A-Z])')
 
+def doi_lookup(article):
+    try:
+        res = re.search(doi, article['text'])
+        d = article['text'][res.span()[0]:res.span()[1]]
+        return d[:-1]
+    except:
+        print "DOI not found"
+        return ''
+
+def issn_lookup(article):
+    date = article['date']
+    try:
+        res = re.search(issn, article['text'])
+        i = article['text'][res2.start():res2.end()]
+        return i, date
+    except:
+        print "ISSN not found"
+        return ''
+
+
+
+
+# -------------------- ROUTING --------------------
 
 @app.route("/")
 def index():
@@ -146,6 +173,16 @@ def RandomDocument():
     # retrieve it
     result = col.find({'_id': rand_id},{'_id':0})[0]
     txt = result['text']
+
+    # find the link to the text
+    base_url = "https://www.ncbi.nlm.nih.gov/pubmed/?term={}"
+    fmat = None 
+    if doi_lookup(result):
+        fmat = doi_lookup(result).replace('/','%2f')
+    else:
+        fmat = issn_lookup(result).replace('/', '%2f')
+    link = base_url.format(fmat)
+
     
     # use gensim to find keywords and summarize
     summary = summarize(txt.replace('\n', ' '), ratio = 0.1, split = True)
@@ -158,7 +195,7 @@ def RandomDocument():
     # count number of occurences of component words
     cdf['count'] = [txt.count(w) for w in cdf.word.values]
     
-    results = {'journal': rand_jnl, 'result': result, 'summary':summary, 'cdf':list(cdf.T.to_dict().values())}
+    results = {'journal': rand_jnl, 'link':link, 'result': result, 'summary':summary, 'cdf':list(cdf.T.to_dict().values())}
     return jsonify(results)
 
 #--------- RUN WEB APP SERVER ------------#

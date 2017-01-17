@@ -105,6 +105,7 @@
 	</div>
 	<div class = 'row'>
 		<h1 id = 'articleHeader'></h1>
+		<h5> <a target ="_blank" id = 'articleLink'></a></h4>
     	<h4> Summary:</h4>
 		<div class = 'col-md-12' id = 'articleText'><pre></pre></div>
 	</div>
@@ -140,6 +141,7 @@ var getDoc = function(topic){
 			console.log(data)
 			d3.select('#articleHeader').text(data['journal'])
 			d3.select('#articleText pre').text(data['summary'])
+			d3.select('#articleLink').attr('href',data['link']).text("Link To Article")
             draw_barchart(data['result'])
             wordGraph(data['cdf'])
 		},
