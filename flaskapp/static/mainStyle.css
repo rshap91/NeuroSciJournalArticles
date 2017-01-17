@@ -1,5 +1,15 @@
-#tooltip {   
-    position: absolute;         
+
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+
+.tooltip {   
+    position: absolute;        
     text-align: center;
 /*    width: 60px;                  
     height: 28px;   */              
@@ -9,15 +19,15 @@
     border: 0px;        
     border-radius: 8px;         
     pointer-events: none;
-    opacity: 0;      
+    opacity: 0;     
+    white-space: pre;
+    word-break: normal;
+    word-wrap: normal; 
 }
 
-#visuals {
-    display:inline-block;
-}
 
 
-div.wordCounts {
+/*div.wordCounts {
     margin-left: 25px;
     display:inline-block;
     float:left;
@@ -28,7 +38,7 @@ div.wordCounts {
     display:inline-block;
     float:left;
     width: 600px;
-}
+}*/
 
 .wordCounts text {
     pointer-events: none;
@@ -38,13 +48,6 @@ div.wordCounts {
     fill-opacity:1;
 }
 
-pre {
-    white-space: pre-wrap;       /* Since CSS 2.1 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
-}
 
 .axis text {
             font-family: serif;
@@ -64,11 +67,19 @@ pre {
     }
 
 
-#articleHeader {
-    clear:left;
-}
 
-#articleText {
-    clear:left;
-    border: 1px solid black;
+#inputText {
+      width: 900px;
+      height: 300px;
+      margin-left:100px;
+      border: 2px inset brown;
+    }
+
+.lead {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: normal;
+    word-break:keep-all; 
 }

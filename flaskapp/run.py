@@ -82,7 +82,8 @@ def summarizePage():
 
     cdf['count'] = [txt.count(w) for w in cdf.word.values]
 
-    summary = summarize(txt)
+    summary = summarize(txt, ratio = 0.25, split = True)
+    summary = '\n\n'.join(summary)
 
     vectorized = cvectr.transform([txt])
 
@@ -94,10 +95,24 @@ def summarizePage():
     topicDF['Max_Topic_Name'] = topicDF[floatCols].apply(lambda row: row.sort_values(ascending = False)[:1].index[0], axis = 1)
     topicDF['Max_Topic_Val'] = topicDF[floatCols].apply(lambda row: row.sort_values(ascending = False)[0], axis = 1)
 
+    result = topicDF.to_dict()
+    result = {t:result[t][0] for t in result}
 
-
-    rdic = {'result':topicDF.to_dict(), 'summary':summary, 'cdf':list(cdf.T.to_dict().values())}
+    rdic = {'result': result, 'summary':summary, 'cdf':list(cdf.T.to_dict().values())}
     return jsonify(rdic)
+
+
+@app.route("/recommend/", methods = ["GET", "POST"])
+def Recommender():
+
+    def Recommend(article):
+        topic = article.Max_Topic_Name
+        data = text_nmf[text_nmf.Max_Topic_Name == topic]
+        sims = pd.Series(cosine_similarity(article[floatCols].reshape(1,-1), data[floatCols])[0], index = data.index)
+        recs = sims.sort_values(ascending=False)
+        return recs[recs<1.][:10]
+
+    return render_template('recommender.html')
 
 
 @app.route("/explore/", methods=["GET","POST"])

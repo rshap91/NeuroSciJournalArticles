@@ -42,30 +42,73 @@
 
 <body>
 
-<header> </header> <!-- Big (Purple?) Rectangle accross top of page with title -->
-<select id = 'dropdown'> </select>
-<div id = 'instructions'> </div>
-<button id = 'submit'>Random Article</button>
+<!--DROPDOWN-->
+<div class="navbar-wrapper">
+  <div class="container">
 
-<div id = 'container'>
+    <nav class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Topic Modeling Neuroscience Articles</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/summarize">Summarize</a></li>
+            <li><a href="/recommend">Recommend</a></li>
+            <li class="active"><a href='/explore'>Explore</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+  </div>
+</div>
+
+
+<div class = 'container'>
+	<select id = 'dropdown'> </select>
+	<div id = 'instructions'> </div>
+	<button id = 'submit'>Random Article</button>
+</div>
+
+<div><pre class="tooltip"></pre></div>
+
+<div class = 'container'>
 <!-- On top:
 				-left: heatmap showing counts of top 25? words in each of the topics for the returned article
 				-right: barchart showing values for each topic in returned article
 -->
-<!--<div id="topicWordCounts"></div>-->
-<div><pre id="tooltip"></pre></div>
 
-<div id = 'sampleArticle'>
-        <div id ="visuals">
-                <h4>Topic Distribution</h4>
-				<div class = 'barchart'></div>
-                <div class = 'wordCounts'> </div>
-		</div>
+    <div class='row' id ="visuals">
+            <h4>Topic Distribution</h4>
+			<div class = 'col-md-6 barchart'></div>
+            <div class = 'col-md-6 wordCounts'> </div>
+	</div>
+	<div class = 'row'>
 		<h1 id = 'articleHeader'></h1>
-        <h4> Summary:</h4>
-		<div id = 'articleText'><pre></pre></div>
+    	<h4> Summary:</h4>
+		<div class = 'col-md-12' id = 'articleText'><pre></pre></div>
+	</div>
 </div>
-
 
 <script type='text/javascript' src="{{url_for('static', filename='barchart2.js')}}"></script>
 <script type='text/javascript' src="{{url_for('static', filename='ComponentWords.js')}}"></script>
@@ -73,10 +116,10 @@
 <script>
 
 /*Populate Dropdown*/
-var topicNames = ['Dependency', 'Coding_Latex', 'Brain_Modelling', 'Stroke_Aneurysm_Damage', 
-        'Memory', 'Attention', 'Psychiatric_Disorder', 'Cancer_Genetics', 
-        'Depression_ADHD', 'Pain_MotorFunction','Neurons', 'Sleep','BrainMapping', 
-        'Alzheimers_Dementia_Parkinson', 'Animal_Experiments']
+var topicNames = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
+        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
+        "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
+        'Brain_Mapping', 'Coding_Latex']
 
 
 

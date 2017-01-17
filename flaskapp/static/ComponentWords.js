@@ -16,10 +16,10 @@ var textg = svg2.append('g').attr('class','text_g')
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
 
-var topics = ['Coding_Latex', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
-        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',  'Sleep',
+var topics = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
+        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
         "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
-        'Brain_Mapping', 'Memory']
+        'Brain_Mapping', 'Coding_Latex']
 
 
 // FUNCTION THAT WILL GET CALLED WHEN NEW DOCUMENT GETS SENT THROUGH WHICH PARSES AND RENDERS WORD COUNTS ON FORCE GRAPH
@@ -86,7 +86,7 @@ function wordGraph(data){
         .style('stroke', '#EEE')
         .style('fill', '#EEE')
         .on("mouseenter", function(d) {
-            d3.select("#tooltip")
+            d3.select(".tooltip")
             .transition()
                 .style("opacity", 1)
                 .style("left", (d3.event.pageX) + "px")
@@ -94,7 +94,7 @@ function wordGraph(data){
                 .text("Topic: " + d.topic + "\nCount: " + d.count)
         })
         .on('mouseleave', function(d){
-            d3.select("#tooltip")
+            d3.select(".tooltip")
             .transition()
                 .style('opacity',0)
         })

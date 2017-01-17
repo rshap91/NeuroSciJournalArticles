@@ -1,9 +1,9 @@
 console.log('hello')
 
-var topics = ['Coding_Latex', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
-        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',  'Sleep',
+var topics = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
+        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
         "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
-        'Brain_Mapping', 'Memory']
+        'Brain_Mapping', 'Coding_Latex']
 
 
 
