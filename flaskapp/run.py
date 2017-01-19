@@ -231,12 +231,12 @@ def RandomDocument():
 
     
     # use gensim to find keywords and summarize
-    summary = summarize(txt.replace('\n', ' '), ratio = 0.1, split = True)
+    summary = summarize(txt.replace('\n', ' '), ratio = 0.08, split = True)
     try:
         if '===' in summary[0]:
             summary = summary[1:]
     except:
-        summary = summarize(txt.replace('\n',' '), ratio = 0.25, split = True)
+        summary = summarize(txt.replace('\n',' '), ratio = 0.15, split = True)
     summary = '\n\n'.join(summary)
     # count number of occurences of component words
     cdf['count'] = [txt.count(w) for w in cdf.word.values]

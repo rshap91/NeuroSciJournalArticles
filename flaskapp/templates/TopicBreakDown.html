@@ -63,18 +63,6 @@
             <li><a href="/summarize">Summarize</a></li>
             <li><a href="/recommend">Recommend</a></li>
             <li class="active"><a href='/explore'>Explore</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
           </ul>
         </div>
       </div>
@@ -107,7 +95,7 @@
 		<h1 id = 'articleHeader'></h1>
 		<h5> <a target ="_blank" id = 'articleLink'></a></h4>
     	<h4> Summary:</h4>
-		<div class = 'col-md-12' id = 'articleText'><pre></pre></div>
+		<div class = 'col-md-12' id = 'articleText'><pre style="word-break: normal; word-wrap: normal; white-space: pre-wrap;"></pre></div>
 	</div>
 </div>
 
@@ -173,7 +161,11 @@ d3.select('#submit')
 <!--<script type='text/javascript' src="{{url_for('static', filename='barchart2.js')}}"></script>
 <script type='text/javascript' src="{{url_for('static', filename='ComponentWords2.js')}}"></script> -->
 
-<footer></footer> <!-- Name and Links -->
+<footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy; Rick Shapiro &middot; <a href="https://www.linkedin.com/in/rickshapirony">Linkedin</a> &middot; <a href="https://github.com/rshap91">Github</a> &middot; <a href="rshap91.github.io">Blog</a></p>
+</footer>
+
 </body>
 </html>
 

@@ -61,6 +61,10 @@
                 d3.select(this).selectAll('td').data(d3.values(d)).enter().append('td').text(function(t){return t})
               })
 
+              $('.tableRow td:nth-child(2)').wrapInner('<a></a>')
+              $('.tableRow a').each(function(){ return $(this).attr({'href': $(this).text(), 'target': '_blank'})})
+              $('.tableRow a').text('Link')
+
             },
              error: function (result) {
                 console.log('AJAX ERROR!')
@@ -68,7 +72,7 @@
           }
           })
 
-          $('.tableRow td:nth-child(2)')
+          
         } // END REC FUNCTION
 
 
@@ -117,18 +121,6 @@
                 <li ><a href="/summarize">Summarize</a></li>
                 <li class="active"><a href="/recommend">Recommend</a></li>
                 <li><a href='/explore'>Explore</a></li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Nav header</li>
-                    <li><a href="#">Separated link</a></li>
-                    <li><a href="#">One more separated link</a></li>
-                  </ul>
-                </li>
               </ul>
             </div>
           </div>
@@ -178,9 +170,9 @@
 
 
       <!-- FOOTER -->
-      <footer>
+     <footer>
         <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2016 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        <p>&copy; Rick Shapiro &middot; <a href="https://www.linkedin.com/in/rickshapirony">Linkedin</a> &middot; <a href="https://github.com/rshap91">Github</a> &middot; <a href="rshap91.github.io">Blog</a></p>
       </footer>
 
     </div><!-- /.container -->

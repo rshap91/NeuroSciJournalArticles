@@ -25,6 +25,9 @@ pre {
     word-wrap: normal; 
 }
 
+.navbar-brand {
+    color: white;
+}
 
 
 /*div.wordCounts {
