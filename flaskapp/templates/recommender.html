@@ -34,7 +34,7 @@
     <script>
       $(document).ready(function(){
 
-        var topicMod = function(txt){
+        var recFunc = function(txt){
 
           var data = JSON.stringify({
             'txt': txt
@@ -43,27 +43,38 @@
           $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
-            url: "/summarize/",
+            url: "/recommend/",
             dataType: "json",
             async: true,
             data: data,
             success: function (data) {
               console.log(data)
-              d3.select('#summaryText pre').text(data['summary'])
-                    draw_barchart(data['result'])
-                    wordGraph(data['cdf'])
+              var ths = d3.select("#recTable tbody").selectAll('.tableHeader')
+                .data(data.slice(0,1)).enter().append('tr').attr('class', 'tableHeader')
+              var trs = d3.select("#recTable tbody").selectAll('.tableRow')
+                .data(data).enter().append('tr').attr('class','tableRow')
+              
+              ths.each(function(d){
+                d3.select(this).selectAll('th').data(d3.keys(d)).enter().append('th').text(function(t){return t.toUpperCase()})
+              })
+              trs.each(function(d){
+                d3.select(this).selectAll('td').data(d3.values(d)).enter().append('td').text(function(t){return t})
+              })
+
             },
              error: function (result) {
                 console.log('AJAX ERROR!')
                 console.log(result)
           }
           })
-        } // END TOPICMOD FUNCTION
+
+          $('.tableRow td:nth-child(2)')
+        } // END REC FUNCTION
 
 
         $('#submitText').click(function(){
           var txt = $('#inputText').val()
-          return topicMod(txt);
+          return recFunc(txt);
         })
 
       })
@@ -148,29 +159,19 @@
     </div>
       <hr class="featurette-divider">
 
-     <!-- Row 2 Visualizations -->
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 barchart"></div>
-        <div class='col-md-6 wordCounts'></div>
-      </div>
-    </div>
-
-      <hr class="featurette-divider">
-
-     <!-- Row 3 Summary -->
-
-    <div class="container">
-        <div class="row">
-          <h2 class="featurette-heading">Summary:</h2>
-          <div class='col-md-10' id = 'summaryText'>
-            <pre class="lead"></pre>
-          </div>
-          <div class='col-md-2' id='ratioSlider'></div>
+    <div class = 'container'>
+      <div class = 'row'>
+        <div class = col-md-12>
+          <table id ="recTable" class='table'>
+            <tbody>
+              <tr></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
+    </div> <!-- container-->
 
+   
       <hr class="featurette-divider">
 
       <!-- /END THE FEATURETTES -->

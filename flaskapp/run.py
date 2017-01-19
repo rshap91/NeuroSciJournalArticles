@@ -11,6 +11,8 @@ Two d3 Viz:
 from sys import stderr, stdout
 import numpy as np
 import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+
 import cPickle as pickle
 import re
 
@@ -56,10 +58,10 @@ with open('static/nmf.pkl', 'rb') as f:
 with open('static/cvectr.pkl') as f:
     cvectr = pickle.load(f)
 
-topics = ['Coding_Latex', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
-        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',  'Sleep',
+topics = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
+        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
         "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
-        'Brain_Mapping', 'Memory']
+        'Brain_Mapping', 'Coding_Latex']
 
 
 # LOCATE ARTICLE LINKS
@@ -85,6 +87,36 @@ def issn_lookup(article):
         print "ISSN not found"
         return ''
 
+# RECOMMENDER FUNCTION
+with open('static/text_nmf.pkl', 'rb') as f:
+    text_nmf = pickle.load(f)
+
+def Recommend(article):
+    topic = article.Max_Topic_Name
+    data = text_nmf[text_nmf.Max_Topic_Name == topic]
+    sims = pd.Series(cosine_similarity(article[topics].reshape(1,-1), data[topics])[0], index = data.index)
+    recs = sims.sort_values(ascending=False)
+    rec_ixs = recs[recs<1.][:10].index
+    rec_scores = recs[recs<1.][:10].values
+    rec_ids = text_nmf.ix[rec_ixs].ID.tolist()
+
+    lnks = []
+    for ID in rec_ids:
+        for jnl in journals:
+            collec = db.get_collection(jnl)
+            cur = collec.find({'_id': ID})
+            if cur.count()>0:
+                    base_url = "https://www.ncbi.nlm.nih.gov/pubmed/?term={}"
+                    fmat = None 
+                    if doi_lookup(cur[0]):
+                        fmat = doi_lookup(cur[0]).replace('/','%2f')
+                    else:
+                        fmat = issn_lookup(cur[0]).replace('/', '%2f')
+                    lnks.append(base_url.format(fmat))
+                    break
+    return rec_ixs, rec_scores, [str(i) for i in rec_ids], lnks
+
+
 
 
 
@@ -109,7 +141,7 @@ def summarizePage():
 
     cdf['count'] = [txt.count(w) for w in cdf.word.values]
 
-    summary = summarize(txt, ratio = 0.25, split = True)
+    summary = summarize(txt, ratio = 0.1, split = True)
     summary = '\n\n'.join(summary)
 
     vectorized = cvectr.transform([txt])
@@ -131,15 +163,29 @@ def summarizePage():
 
 @app.route("/recommend/", methods = ["GET", "POST"])
 def Recommender():
+    if request.method == 'GET':
+        return render_template('recommender.html')
 
-    def Recommend(article):
-        topic = article.Max_Topic_Name
-        data = text_nmf[text_nmf.Max_Topic_Name == topic]
-        sims = pd.Series(cosine_similarity(article[floatCols].reshape(1,-1), data[floatCols])[0], index = data.index)
-        recs = sims.sort_values(ascending=False)
-        return recs[recs<1.][:10]
+    # Get the text
+    txt = request.get_json(force=True)['txt']
+    vectorized = cvectr.transform([txt])
+    topic_transformed = nmf.transform(vectorized)
+    topicDF = pd.DataFrame(topic_transformed, columns = topics)
+    print topicDF.shape
 
-    return render_template('recommender.html')
+    floatCols = topicDF.columns[topicDF.dtypes == 'float64']
+
+    topicDF['Max_Topic_Name'] = topicDF[floatCols].apply(lambda row: row.sort_values(ascending = False)[:1].index[0], axis = 1)
+    topicDF['Max_Topic_Val'] = topicDF[floatCols].apply(lambda row: row.sort_values(ascending = False)[0], axis = 1)
+
+    rec_ixs, rec_scores, rec_ids, lnks = Recommend(topicDF.ix[0])
+    return_data = zip(rec_ids, rec_scores, lnks)
+
+    return jsonify([{'id': ID, 'score': score, 'link':lnk} for ID, score, lnk in return_data])
+
+    
+
+
 
 
 @app.route("/explore/", methods=["GET","POST"])
