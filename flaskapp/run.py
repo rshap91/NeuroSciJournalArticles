@@ -35,7 +35,7 @@ from flask import Flask, render_template, jsonify, request, redirect, send_from_
 # journals = db.collection_names()
 
 
-app = Flask('project4')
+app = Flask('p4')
 mongo = PyMongo(app)
 #app.config['MONGO_DBNAME'] = 'project4'
 
@@ -236,7 +236,7 @@ def RandomDocument():
         if '===' in summary[0]:
             summary = summary[1:]
     except:
-        summary = summarize(txt.replace('\n',' '), ratio = 0.15, split = True)
+        summary = summarize(txt.replace('\n',' '), ratio = 0.08, split = True)
     summary = '\n\n'.join(summary)
     # count number of occurences of component words
     cdf['count'] = [txt.count(w) for w in cdf.word.values]
@@ -248,5 +248,5 @@ def RandomDocument():
 
 # Start the app server
 if __name__ == '__main__':
-    app.run(host= '0.0.0.0', port = 8888)
+    app.run(host= '0.0.0.0', port = 8888, debug = True)
 
