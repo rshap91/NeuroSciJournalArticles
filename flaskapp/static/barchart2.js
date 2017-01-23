@@ -1,10 +1,9 @@
 console.log('hello')
 
-var topics = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
-        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
-        "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
-        'Brain_Mapping', 'Coding_Latex']
-
+var topics = ['Psychiatric_Disorder', 'Cell_Biology', 'Aneurysms', 'Neurons',
+       'Peripheral_Nervous_System', 'Stroke', 'Epilepsy', 'Latex',
+       'Sclerosis', 'Sleep', 'Cancer', 'Migraine_&_IBS',
+       'Procedural_Learning', 'Alzheimers_Dementia', 'Parkinsons']
 
 
 
@@ -13,10 +12,10 @@ var MaxTopicKeys = ['Max_Topic_Name','Max_Topic_Val']
 
 // MARGIN CONVENTION
 // 1) def margins (all 40 or 20 for top bottom 10 for left right)
-var margin = {top:10, right:10, bottom:40, left:150}
+var margin = {top:10, right:25, bottom:60, left:140}
 // 2) def width/height with margins subtracted
 var width = 600 - margin.right - margin.left
-var height = 350 - margin.top - margin.bottom
+var height = 380 - margin.top - margin.bottom
 
 
 
@@ -37,7 +36,7 @@ var xScale = d3.scaleLinear()
 
 var yScale = d3.scaleBand()
     .domain(topics)
-    .range([margin.top, height], 0.2)
+    .range([margin.top, height], 0.3, 0)
 
 
 // 2) create axis functions...
@@ -61,6 +60,9 @@ var yAx = svg.append('g')
         .style("text-anchor", "end")
         // .attr("dx", "-.8em")
         //.attr("dy", "-.03em")
+
+
+
 
 
 // ------------------------------------------------------------------------------ //
@@ -91,7 +93,7 @@ function draw_barchart(obj){
         .enter().append('rect')
         .attr('x', 0)
         .attr('y', function(d){return yScale(d.topic)})
-        .attr('width', 1)
+        .attr('width', 0)
         .attr('height', 20)
         .style('fill', function(d){return color(d.topic)})
         .style('opacity', 0)
@@ -113,14 +115,13 @@ function draw_barchart(obj){
             .style('opacity', 0.88)
             .duration(1250)
 
-
     var x_axLine = svg.append('line')
         .attr('x1',0)
         .attr('x2', width)
-        .attr('y1', height-2)
-        .attr('y2', height-2)
+        .attr('y1', height)
+        .attr('y2', height)
         .attr('stroke', 'black')
-        .attr('stroke-width', '6px')
+        .attr('stroke-width', '4px')
 
     var y_axLine = svg.append('line')
         .attr('x1',0)
@@ -128,7 +129,8 @@ function draw_barchart(obj){
         .attr('y1', margin.top)
         .attr('y2', height)
         .attr('stroke', 'black')
-        .attr('stroke-width', '6px')
+        .attr('stroke-width', '4px')
+
 
 }// END DRAW FUNCTION
 

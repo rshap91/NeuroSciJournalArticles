@@ -16,10 +16,10 @@ var textg = svg2.append('g').attr('class','text_g')
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
 
-var topics = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
-        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
-        "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
-        'Brain_Mapping', 'Coding_Latex']
+var topics =['Psychiatric_Disorder', 'Cell_Biology', 'Aneurysms', 'Neurons',
+       'Peripheral_Nervous_System', 'Stroke', 'Epilepsy', 'Latex',
+       'Sclerosis', 'Sleep', 'Cancer', 'Migraine_&_IBS',
+       'Procedural_Learning', 'Alzheimers_Dementia', 'Parkinsons']
 
 
 // FUNCTION THAT WILL GET CALLED WHEN NEW DOCUMENT GETS SENT THROUGH WHICH PARSES AND RENDERS WORD COUNTS ON FORCE GRAPH

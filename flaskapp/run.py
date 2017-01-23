@@ -26,7 +26,6 @@ from flask import Flask, render_template, jsonify, request, redirect, send_from_
 
 
 
-
 # --------------- DATABASE FUNCTIONS ------------------
 
 
@@ -58,10 +57,10 @@ with open('static/nmf.pkl', 'rb') as f:
 with open('static/cvectr.pkl') as f:
     cvectr = pickle.load(f)
 
-topics = ['Sleep', 'Memory', "Genetics", 'Psychiatric_Disorder', 'Attention', 'ImmuneSystem_Cancer',
-        'Neurons', 'Animal_Experiments', 'Alzheimers_Dementia_Parkinson',
-        "Dependency", "Pain_MotorFunction", 'Stroke_Aneurysm_Damage', 'Developmental_Disorders', 
-        'Brain_Mapping', 'Coding_Latex']
+topics =  ['Psychiatric_Disorder', 'Cell_Biology', 'Aneurysms', 'Neurons',
+       'Peripheral_Nervous_System', 'Stroke', 'Epilepsy', 'Latex',
+       'Sclerosis', 'Sleep', 'Cancer', 'Migraine_&_IBS',
+       'Procedural_Learning', 'Alzheimers_Dementia', 'Parkinsons']
 
 
 # LOCATE ARTICLE LINKS
@@ -139,9 +138,9 @@ def summarizePage():
 
     txt = request.get_json(force=True)['txt']
 
-    cdf['count'] = [txt.count(w) for w in cdf.word.values]
+    cdf['count'] = [txt.lower().count(w) for w in cdf.word.values]
 
-    summary = summarize(txt, ratio = 0.1, split = True)
+    summary = summarize(txt, ratio = 0.2, split = True)
     summary = '\n\n'.join(summary)
 
     vectorized = cvectr.transform([txt])
@@ -159,6 +158,7 @@ def summarizePage():
 
     rdic = {'result': result, 'summary':summary, 'cdf':list(cdf.T.to_dict().values())}
     return jsonify(rdic)
+
 
 
 @app.route("/recommend/", methods = ["GET", "POST"])
@@ -239,8 +239,8 @@ def RandomDocument():
         summary = summarize(txt.replace('\n',' '), ratio = 0.08, split = True)
     summary = '\n\n'.join(summary)
     # count number of occurences of component words
-    cdf['count'] = [txt.count(w) for w in cdf.word.values]
-    
+    cdf['count'] = [txt.lower().count(w) for w in cdf.word.values]
+
     results = {'journal': rand_jnl, 'link':link, 'result': result, 'summary':summary, 'cdf':list(cdf.T.to_dict().values())}
     return jsonify(results)
 
