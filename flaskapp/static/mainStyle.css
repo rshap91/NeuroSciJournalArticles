@@ -86,3 +86,9 @@ pre {
     word-wrap: normal;
     word-break:keep-all; 
 }
+
+#loading {
+    padding-top: 25px;
+    font-family: serif;
+    font-size: 1.5em;
+}

@@ -23,7 +23,8 @@ from flask_pymongo import PyMongo
 
 from flask import Flask, render_template, jsonify, request, redirect, send_from_directory, url_for
 
-
+import requests
+from bs4 import BeautifulSoup
 
 
 # --------------- DATABASE FUNCTIONS ------------------
@@ -95,11 +96,12 @@ def Recommend(article):
     data = text_nmf[text_nmf.Max_Topic_Name == topic]
     sims = pd.Series(cosine_similarity(article[topics].reshape(1,-1), data[topics])[0], index = data.index)
     recs = sims.sort_values(ascending=False)
-    rec_ixs = recs[recs<1.][:10].index
-    rec_scores = recs[recs<1.][:10].values
+    rec_ixs = recs[recs<1.][:5].index
+    rec_scores = recs[recs<1.][:5].values
     rec_ids = text_nmf.ix[rec_ixs].ID.tolist()
 
     lnks = []
+    titles = []
     for ID in rec_ids:
         for jnl in journals:
             collec = db.get_collection(jnl)
@@ -111,9 +113,28 @@ def Recommend(article):
                         fmat = doi_lookup(cur[0]).replace('/','%2f')
                     else:
                         fmat = issn_lookup(cur[0]).replace('/', '%2f')
-                    lnks.append(base_url.format(fmat))
-                    break
-    return rec_ixs, rec_scores, [str(i) for i in rec_ids], lnks
+                    link = base_url.format(fmat)
+                    resp = requests.get(link)
+                    soup = BeautifulSoup(resp.text, 'lxml')
+                    if soup.find('div', class_='rprt abstract'):
+                        title = soup.find('div', class_='rprt abstract').find('h1').text
+                        lnks.append(link)
+                        titles.append(title)
+                        break
+                    elif soup.find('div',class_='sensor_inner'):
+                        link = soup.find('div', class_='sensor_inner').find('a').attrs['href']
+                        title = soup.find('div', class_='sensor_inner').find('a').text
+                        lnks.append(link)
+                        titles.append(title)
+                        break
+                    else:
+                        lnks.append(base_url.format(topic))
+                        titles.append('Article Not Found!')
+                        break
+
+                        
+
+    return rec_ixs, rec_scores, titles, lnks
 
 
 

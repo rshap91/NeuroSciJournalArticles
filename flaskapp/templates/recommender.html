@@ -35,6 +35,12 @@
       $(document).ready(function(){
 
         var recFunc = function(txt){
+          $('p#loading').text('Computing Recommendations')
+          var left = -10
+          var xScreen = setInterval(function(){
+            left++
+            $('p#loading').css('margin-left', left+'px')
+          }, 10)
 
           var data = JSON.stringify({
             'txt': txt
@@ -48,6 +54,8 @@
             async: true,
             data: data,
             success: function (data) {
+              $('p#loading').text('')
+              clearInterval(xScreen)
               console.log(data)
               var ths = d3.select("#recTable tbody").selectAll('.tableHeader')
                 .data(data.slice(0,1)).enter().append('tr').attr('class', 'tableHeader')
@@ -61,6 +69,8 @@
                 d3.select(this).selectAll('td').data(d3.values(d)).enter().append('td').text(function(t){return t})
               })
 
+              // 1-indexed
+              $('.tableRow td:nth-child(1)').css({'font-family':'monospace', 'font-size': '88%', 'width':$(".tableRow").css('width').split('px')[0]/2 +'px'})
               $('.tableRow td:nth-child(2)').wrapInner('<a></a>')
               $('.tableRow a').each(function(){ return $(this).attr({'href': $(this).text(), 'target': '_blank'})})
               $('.tableRow a').text('Link')
@@ -91,8 +101,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <!-- Custom styles for this template -->
-    <link href="{{url_for('static', filename = 'carousel.css')}}" rel="stylesheet">
+    
 
 
   </head>
@@ -149,11 +158,12 @@
       </div><!-- /.row -->
 
     </div>
-      <hr class="featurette-divider">
+
 
     <div class = 'container'>
       <div class = 'row'>
         <div class = col-md-12>
+          <p id='loading'></p>
           <table id ="recTable" class='table'>
             <tbody>
               <tr></tr>
@@ -189,10 +199,6 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../../assets/js/vendor/holder.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+   
   </body>
 </html>

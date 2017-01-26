@@ -6,20 +6,17 @@ var svg2 = d3.select(".wordCounts").append('svg')
     .attr('width', w2)
     .attr('height', h2);
 
-// SUB G'S FOR NODE/LINKS/TEXT
-var nodeg = svg2.append('g').attr('class','nodes_g')
-var linkg = svg2.append('g').attr('class','links_g')
-var textg = svg2.append('g').attr('class','text_g')
-
 
 //COLOR SCALE FOR TOPICS
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
+
 
 
 var topics =['Psychiatric_Disorder', 'Cell_Biology', 'Aneurysms', 'Neurons',
        'Peripheral_Nervous_System', 'Stroke', 'Epilepsy', 'Latex',
        'Sclerosis', 'Sleep', 'Cancer', 'Migraine_&_IBS',
        'Procedural_Learning', 'Alzheimers_Dementia', 'Parkinsons']
+
 
 
 // FUNCTION THAT WILL GET CALLED WHEN NEW DOCUMENT GETS SENT THROUGH WHICH PARSES AND RENDERS WORD COUNTS ON FORCE GRAPH
@@ -43,13 +40,12 @@ function wordGraph(data){
 
     })
 
-    console.log(links)
 
     // SIZE OF THE NODES WILL BE DETERMINED BY THE WORD COUNT IN THE DOCUMENT
     var circleScale = d3.scalePow()
         .exponent(2)
         .domain(d3.extent(data.map(function(d){return d.count})))
-        .range([12,35])
+        .range([10,40])
     
 
     // JOINED NODES AND LINKS
@@ -62,147 +58,111 @@ function wordGraph(data){
     console.log(graph)
 
     // RENDER GRAPH
-
-    var node = nodeg
-        .selectAll('circle')
-        .data(graph.nodes)
-    
-    //EXIT
-    node.exit().remove()
-
-
-    //UPDATE
-    node
-        .attr('r', function(d){return d.count>0 ? circleScale(d.count) : 0})
-        .call(d3.drag()
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended))
-
-
-    // ENTER (FOR FIRST TIME)
-    node.enter().append('circle')
-        .attr('r', function(d){return d.count>0 ? circleScale(d.count) : 0})
-        .style('stroke', '#EEE')
-        .style('fill', '#EEE')
-        .on("mouseenter", function(d) {
-            d3.select(".tooltip")
-            .transition()
-                .style("opacity", 1)
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY) + "px")
-                .text("Topic: " + d.topic + "\nCount: " + d.count)
-        })
-        .on('mouseleave', function(d){
-            d3.select(".tooltip")
-            .transition()
-                .style('opacity',0)
-        })
-        .call(d3.drag()
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended))
-        .merge(node)
-
-
-
-
-    // SAME FOR TEXT
-
-    var nodeText = textg
-        .selectAll('text')
-        .data(graph.nodes)
-
-    //EXIT
-    nodeText.exit().remove()
-
-    // UPDATE
-
-    nodeText
-        .style('font-size', function(d){return d.count>0 ? circleScale(d.count):0})
-
-    // ENTER
-    nodeText
-        .enter().append('text')
-        .text(function(d){ return d.word})
-        .style('font-size', function(d){return d.count>0 ? circleScale(d.count):0})
-        .style("fill", function(d) { return color(d.topic); })
-        .style('fill-opacity', 1)
-        .merge(nodeText)
-
-
-
-    // SAME FOR LINKS
-
-    var link = linkg
-        .selectAll('line')
-        .data(graph.links)
-
-    // EXIT
-
-    link.exit().remove()
-
-    // UPDATE
-    //nada...
-
-    //ENTER
-    link
-        .enter().append('line')
-        .attr('stroke','white')
-        .attr('stroke-width','0px')
-        .merge(link)
-
-
-    // START SIMULATION
-    var simulation = d3.forceSimulation()
-        .force("charge", d3.forceManyBody().strength(-100)) // internodal strength
-        .force("link", d3.forceLink().id(function(d){return d['word'];}).distance(75).strength(0.88)) // creates a force connecting links. Id points to related id in nodes
+    var simulation = d3.forceSimulation(graph.nodes)
+        .force("charge", d3.forceManyBody().strength(-100))
+        .force("link", d3.forceLink(graph.links).id(function(d){return d['word'];}).distance(75).strength(0.88))
         .force("center", d3.forceCenter(225, 175))
         .force("x", d3.forceX(w2/2)) // pull towards location on x axis
         .force("y", d3.forceY(h2/2)) // pull towards location on y axis     
+        .alphaTarget(0.1)
         .on("tick", ticked);
-   
 
+    var g = svg2.append("g"),
+        link = g.selectAll(".link"),
+        node = g.selectAll(".node");
+        nodeText = g.selectAll(".node");
 
-    window.node = node
+    restart();
 
-function ticked() {
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+    function restart() {
 
-    node // CX AND CY LIMIT NODES TO BOUNDING BOX
-        .attr("cx", function(d) { return d.x = Math.max(circleScale(d.count), Math.min(w2-circleScale(d.count)*2, d.x)); })
-        .attr("cy", function(d) { return d.y = Math.max(circleScale(d.count), Math.min(h2-circleScale(d.count)*2, d.y)); });
-    nodeText
-        .attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; });
+        // Apply the general update pattern to the nodes.
+        node = node.data(graph.nodes);
+        node.exit().remove();
+        node = node.enter().append("circle")
+          .attr('r', function(d){return d.count>0 ? circleScale(d.count) : 0})
+          .attr("fill", function(d) { return color(d.id); })
+          .style('stroke', '#EEE')
+          .style('fill', '#EEE')
+          .on("mouseenter", function(d) {
+              d3.select(".tooltip")
+              .transition()
+                  .style("opacity", 1)
+                  .style("left", (d3.event.pageX) + "px")
+                  .style("top", (d3.event.pageY) + "px")
+                  .text("Topic: " + d.topic + "\nCount: " + d.count)
+          })
+          .on('mouseleave', function(d){
+              d3.select(".tooltip")
+              .transition()
+                  .style('opacity',0)
+          })
+          .call(d3.drag()
+              .on('start', dragstarted)
+              .on('drag', dragged)
+              .on('end', dragended))
+          .merge(node); 
+
+        nodeText = nodeText.data(graph.nodes)
+        nodeText.exit().remove();
+        nodeText = nodeText.enter().append("text")
+            .text(function(d){ return d.word})
+            .style('font-size', function(d){return d.count>0 ? circleScale(d.count):0})
+            .style("fill", function(d) { return color(d.topic); })
+            .style('fill-opacity', 1)
+            .merge(nodeText)
+
+        // Apply the general update pattern to the links.
+        link = link.data(graph.links, function(d) { return d.source.id + "-" + d.target.id; });
+        link.exit().remove();
+        link = link.enter().append("line")
+          .attr('stroke','white')
+          .attr('stroke-width','0px')
+          .merge(link); 
+        // Update and restart the simulation.
+        simulation.nodes(graph.nodes);
+        simulation.force("link").links(graph.links);
+        simulation.alpha(1).restart();
+    }
+
+    function ticked() {
+        node // CX AND CY LIMIT NODES TO BOUNDING BOX
+            .attr("cx", function(d) { return d.x = Math.max(circleScale(d.count), Math.min(w2-circleScale(d.count)*2, d.x)); })
+            .attr("cy", function(d) { return d.y = Math.max(circleScale(d.count), Math.min(h2-circleScale(d.count)*2, d.y)); });
+
+        link.attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; })
+
+        nodeText
+            .attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; });
+    }
+
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.25).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
     }
 
 
-function dragstarted(d) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-  d.fx = d.x;
-  d.fy = d.y;
-}
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-}
-function dragended(d) {
-  if (!d3.event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-}
-
-// SYNC NODES AND LINKS TO SIMULATION
-simulation
-    .nodes(graph.nodes);
-
-simulation.force("link")
-    .links(graph.links);
-
 
 }//END OF WORDGRAPH FUNC
+
+
+
+
+
+
+
+
