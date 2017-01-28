@@ -6,6 +6,7 @@ var svg2 = d3.select(".wordCounts").append('svg')
     .attr('width', w2)
     .attr('height', h2);
 
+var g = svg2.append("g")
 
 //COLOR SCALE FOR TOPICS
 var color = d3.scaleOrdinal(d3.schemeCategory20b);
@@ -20,7 +21,8 @@ var topics =['Psychiatric_Disorder', 'Cell_Biology', 'Aneurysms', 'Neurons',
 
 
 // FUNCTION THAT WILL GET CALLED WHEN NEW DOCUMENT GETS SENT THROUGH WHICH PARSES AND RENDERS WORD COUNTS ON FORCE GRAPH
-function wordGraph(data){    
+function wordGraph(data){ 
+    data = data.filter(function(d){ return d.count > 0}) 
     window.data = data
 
     // NODES ARE ALREADY FORMATED IN DATA AS IS
@@ -67,10 +69,9 @@ function wordGraph(data){
         .alphaTarget(0.1)
         .on("tick", ticked);
 
-    var g = svg2.append("g"),
-        link = g.selectAll(".link"),
-        node = g.selectAll(".node");
-        nodeText = g.selectAll(".node");
+        var link = g.selectAll(".link"),
+        node = g.selectAll(".node"),
+        nodeText = g.selectAll(".nodeText");
 
     restart();
 
@@ -80,6 +81,7 @@ function wordGraph(data){
         node = node.data(graph.nodes);
         node.exit().remove();
         node = node.enter().append("circle")
+          .attr('class' ,'node')
           .attr('r', function(d){return d.count>0 ? circleScale(d.count) : 0})
           .attr("fill", function(d) { return color(d.id); })
           .style('stroke', '#EEE')
@@ -106,6 +108,7 @@ function wordGraph(data){
         nodeText = nodeText.data(graph.nodes)
         nodeText.exit().remove();
         nodeText = nodeText.enter().append("text")
+            .attr('class','nodeText')
             .text(function(d){ return d.word})
             .style('font-size', function(d){return d.count>0 ? circleScale(d.count):0})
             .style("fill", function(d) { return color(d.topic); })
@@ -116,6 +119,7 @@ function wordGraph(data){
         link = link.data(graph.links, function(d) { return d.source.id + "-" + d.target.id; });
         link.exit().remove();
         link = link.enter().append("line")
+          .attr('class', 'link')
           .attr('stroke','white')
           .attr('stroke-width','0px')
           .merge(link); 
