@@ -12,6 +12,21 @@
 
     <title>BrainOnLDA</title>
 
+
+    <style type="text/css">
+      @font-face {
+        font-family: "Cochin";
+        src: "{{url_for('static', filename = 'Cochin.ttc')}}" format("truetype");
+      }
+
+      .indexP {
+        font-family : 'Cochin', serif;
+        font-size: 1.2em;
+      }
+
+    </style>
+
+
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
 
@@ -25,7 +40,8 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -71,6 +87,8 @@
     ================================================== -->
     <!-- Wrap the rest of the page in another container to center all the content. -->
 
+    <div><pre class="tooltip"></pre></div>
+
     <div class="container marketing">
 
       <!-- START THE FEATURETTES -->
@@ -78,17 +96,21 @@
       <hr class="featurette-divider">
 
       <div class="row featurette">
-        <div class="col-md-12">
-        Intro To Come:
-        <ul>
-          <li>Click on Summarize to summarize a piece of text </li>
-          <li>Click Recommend to get recommendations on articles form the database </li>
-          <li>Click Explore to explore the articles in the database.</li>
-        </ul>
+        <div class="col-md-4">
+          <p class='indexP'>Click on Summarize to summarize a piece of text </p>
+        </div>
+        <div class="col-md-4">
+          <p class="indexP">Click on Recommend to get simmilar articles form the Database</p>
+        </div>
+        <div class="col-md-4">
+          <p class="indexP">Click on Explore to see a sample article</p>
         </div>
       </div>
 
       <hr class="featurette-divider">
+
+      <div class="row">
+        <div class='wordCounts'></div>
 
       <!-- /END THE FEATURETTES -->
 
@@ -101,16 +123,27 @@
 
     </div><!-- /.container -->
 
+    <!-- Word Bubbles -->
+    <script src="{{url_for('static', filename = 'HomePageWordGraph.js')}}"></script>
+    <script>
+      $(document).ready(function(){
+        w2 = $('div.wordCounts').width()
+        h2 = $('div.wordCounts').height()
+        svg2.attr('width', w2).attr('height',h2)
+        d3.csv("{{url_for('static', filename = 'components_df_mini.csv')}}", function(error, data){
+          data.forEach(function(d){
+            d.count = Math.random()*10
+          }) // data.forEach
+
+          wordGraph(data)
+        }) // d3.csv
+      }) // doc.ready()
+    </script>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../../assets/js/vendor/holder.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>

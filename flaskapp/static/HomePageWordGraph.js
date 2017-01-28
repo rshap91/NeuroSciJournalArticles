@@ -1,6 +1,6 @@
 // SECOND SVG FOR WORD NODES 
 var w2 = $('div.wordCounts').width()
-var h2 = 350
+var h2 = 650
 
 var svg2 = d3.select(".wordCounts").append('svg')
     .attr('width', w2)
@@ -45,7 +45,7 @@ function wordGraph(data){
     var circleScale = d3.scalePow()
         .exponent(2)
         .domain(d3.extent(data.map(function(d){return d.count})))
-        .range([10,40])
+        .range([15,30])
     
 
     // JOINED NODES AND LINKS
@@ -59,9 +59,8 @@ function wordGraph(data){
 
     // RENDER GRAPH
     var simulation = d3.forceSimulation(graph.nodes)
-        .force("charge", d3.forceManyBody().strength(-100))
-        .force("link", d3.forceLink(graph.links).id(function(d){return d['word'];}).distance(75).strength(0.88))
-        .force("center", d3.forceCenter(225, 175))
+        .force("charge", d3.forceManyBody().strength(-300))
+        .force("link", d3.forceLink(graph.links).id(function(d){return d['word'];}).distance(100).strength(0.88))
         .force("x", d3.forceX(w2/2)) // pull towards location on x axis
         .force("y", d3.forceY(h2/2)) // pull towards location on y axis     
         .alphaTarget(0.1)
@@ -90,7 +89,7 @@ function wordGraph(data){
                   .style("opacity", 1)
                   .style("left", (d3.event.pageX) + "px")
                   .style("top", (d3.event.pageY) + "px")
-                  .text("Topic: " + d.topic + "\nCount: " + d.count)
+                  .text("Topic: " + d.topic)
           })
           .on('mouseleave', function(d){
               d3.select(".tooltip")
