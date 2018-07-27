@@ -1,6 +1,7 @@
 # NeuroSciJournalArticles
 Topic Modeling and Clustering Neuroscience Journal Articles From PubMed
 
+## NOTE: I took the app down as I had to pay for it. If you'd like a demo please email me at rick.shapirony@gmail.com.
 
 Topic Modeling is the process of using your computer to generalize a piece of text based on the words contained in the text. This is different from summarizing a piece of text in that summarizing chooses the most relevant sentences in the text while topic modeling groups individual words into separate categories. You can then examine an article for which words are used most often and assign it to the category containing those words. 
 
